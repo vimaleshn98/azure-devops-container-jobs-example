@@ -11,4 +11,9 @@ stages:
     pool:
       vmImage: 'ubuntu-16.04'
     steps:
-    - script: echo Testing on Linux!
+    - script: echo build on Linux!
+  - job: windows
+    pool:
+      vmImage: 'vs2017-win2016'
+    steps:
+    - script: echo build on windows!
