@@ -58,4 +58,4 @@ steps:
     containerRegistry: 'dockerhub'
     repository: 'azure-devops'
     command: 'buildAndPush'
-    Dockerfile: 'Dockerfile'
+    Dockerfile: 'https://artprodsin1.artifacts.visualstudio.com/A1518c0af-fead-4cb5-a115-e66404b4f6ac/14345487-234e-4e44-8a32-93c193b7f20e/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL3ZpbWFsZXNobjQ4L3Byb2plY3RJZC8xNDM0NTQ4Ny0yMzRlLTRlNDQtOGEzMi05M2MxOTNiN2YyMGUvYnVpbGRJZC8xMTMvYXJ0aWZhY3ROYW1lL015UHJvamVjdA2/content?format=file&subPath=%2FDockerfile'
