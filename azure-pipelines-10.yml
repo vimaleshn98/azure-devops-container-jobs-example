@@ -52,6 +52,10 @@ steps:
   inputs:
     artifactName: 'MyProject'
     targetPath: 'MyProject/bin/release/netcoreapp2.2/publish/'
+ - task: DownloadPipelineArtifact@1
+    inputs:
+      artifactName: 'MyProject'
+      targetPath: '$(System.DefaultWorkingDirectory)'   
 
 - task: Docker@2
   inputs:
