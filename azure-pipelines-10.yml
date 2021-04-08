@@ -1,54 +1,93 @@
-# ASP.NET
-# Build and test ASP.NET projects.
-# Add steps that publish symbols, save build artifacts, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/apps/aspnet/build-aspnet-4
-
-trigger:
-- master
-pool:
-  vmImage: 'ubuntu-16.04'
-
-container: mcr.microsoft.com/dotnet/core/sdk:2.2
-
 resources:
   containers:
-  - container: redis
-    image: redis
+  - container: redis5
+    image: redis:5
+  - container: redis4
+    image: redis:4
 
-services:
-  redis: redis
+jobs:
+- job: BuildAndTest
+  displayName: Build and Test
 
-variables:
-  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  pool:
+    vmImage: 'ubuntu-16.04'
 
-steps:
-- task: DotNetCoreCLI@2
-  displayName: Build
-  inputs:
-    command: 'build'
-    projects: '**/*.csproj'
-    arguments: '--configuration release'
+  container:
+    image: example.azurecr.io/my-project-pipeline-environment:20190518.1
+    endpoint: 'MyACR'
 
-- task: DotNetCoreCLI@2
-  displayName: Test
-  inputs:
-    command: test
-    projects: '**/*Tests.csproj'
-    arguments: '--configuration release'
-  env:
-    CONNECTIONSTRINGS_REDIS: redis:6379
+  services:
+    redis5: redis5
+    redis4: redis4
 
-- task: DotNetCoreCLI@2
-  displayName: Publish
-  inputs:
-    command: publish
-    projects: 'MyProject/MyProject.csproj'
-    publishWebProjects: false
-    zipAfterPublish: false
-    arguments: '--configuration release'
+  variables:
+    DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
 
-- task: PublishPipelineArtifact@0
-  displayName: Store artefact
-  inputs:
-    artifactName: 'MyProject'
-    targetPath: 'MyProject/bin/release/netcoreapp2.2/publish/'   
+  steps:
+  - task: DotNetCoreCLI@2
+    displayName: Build
+    inputs:
+      command: build
+      projects: '**/*.csproj'
+      arguments: '--configuration release'
+
+  - task: DotNetCoreCLI@2
+    displayName: Test with Redis v5
+    inputs:
+      command: test
+      projects: '**/*Tests.csproj'
+      arguments: '--configuration release'
+      testRunTitle: MyProject - Redis v5 - $(Agent.JobName)
+    env:
+      CONNECTIONSTRINGS_REDIS: redis5:6379
+    continueOnError: true
+
+  - task: DotNetCoreCLI@2
+    displayName: Test with Redis v4
+    inputs:
+      command: test
+      projects: '**/*Tests.csproj'
+      arguments: '--configuration release'
+      testRunTitle: MyProject - Redis v4 - $(Agent.JobName)
+    env:
+      CONNECTIONSTRINGS_REDIS: redis4:6379
+    continueOnError: true
+
+  - task: DotNetCoreCLI@2
+    displayName: Publish
+    inputs:
+      command: publish
+      projects: 'MyProject/MyProject.csproj'
+      publishWebProjects: false
+      zipAfterPublish: false
+      arguments: '--configuration release'
+
+  - task: PublishPipelineArtifact@0
+    displayName: Store artefact
+    inputs:
+      artifactName: 'MyProject'
+      targetPath: 'MyProject/bin/release/netcoreapp2.2/publish/'
+    condition: eq(variables['Agent.JobStatus'], 'Succeeded')
+ 
+- job: Package
+  dependsOn: BuildAndTest
+  condition: succeeded()
+
+  pool:
+    vmImage: 'ubuntu-16.04'
+
+  steps:
+  - checkout: none
+
+  - task: DownloadPipelineArtifact@1
+    inputs:
+      artifactName: 'MyProject'
+      targetPath: '$(System.DefaultWorkingDirectory)'
+
+  - task: Docker@2
+    displayName: Docker build and Push
+    inputs:
+      command: buildAndPush
+      containerRegistry: 'MyACR'
+      repository: myproject
+      tags: $(Build.BuildNumber)
