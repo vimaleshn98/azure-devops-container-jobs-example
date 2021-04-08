@@ -1,3 +1,5 @@
+trigger:
+- master
 resources:
   containers:
   - container: redis5
