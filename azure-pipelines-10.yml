@@ -1,8 +1,7 @@
-
 stages:
-- stage: Build
+- stage: Build and publish
   jobs:
-  - job: Linux
+  - job: 
     pool:
       vmImage: 'ubuntu-16.04'
     steps:
@@ -11,16 +10,28 @@ stages:
         command: 'build'
         projects: '**/*.csproj'
         arguments: '--configuration release'
-  - job: windows
-    pool:
-      vmImage: 'vs2017-win2016'
-    steps:
     - task: DotNetCoreCLI@2
+      displayName: Publish
       inputs:
-        command: 'build'
-        projects: '**/*.csproj'
+        command: publish
+        projects: 'MyProject/MyProject.csproj'
+        publishWebProjects: false
+        zipAfterPublish: false
         arguments: '--configuration release'
-# - stage: Test
+# jobs:
+# - job: 
+#   pool:
+#     vmImage: 'ubuntu-16.04'
+  
+#   - stage: Build
+#     steps:
+#     - task: DotNetCoreCLI@2
+#       inputs:
+#         command: 'build'
+#         projects: '**/*.csproj'
+#         arguments: '--configuration release'
+
+# - stage: Publish
 #   jobs:
-#   - job: test-on-linux
+#   - job: Publish-on-linux
     
