@@ -7,23 +7,8 @@ resources:
 stages:
 - stage: Build
   jobs:
-  - job: BuildJob
-    container: linux
-    steps:
-    - script: echo Building!
-- stage: Test
-  jobs:
-  - job: TestOnWindows
-    container: windows
-    steps:
-    - script: echo Testing on Windows!
-  - job: TestOnLinux
-    container: linux
+  - job: Linux
+    pool:
+      vmImage: 'ubuntu-16.04'
     steps:
     - script: echo Testing on Linux!
-- stage: Deploy
-  jobs:
-  - job: Deploy
-    container: windows
-    steps:
-    - script: echo Deploying the code!
