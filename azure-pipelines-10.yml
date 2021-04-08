@@ -1,9 +1,4 @@
-resources:
-  containers:
-  - container: linux # reusable alias
-    image: ubuntu:16.04
-  - container: windows # reusable alias
-    image: windows:latest
+
 stages:
 - stage: Build
   jobs:
@@ -17,3 +12,4 @@ stages:
       vmImage: 'vs2017-win2016'
     steps:
     - script: echo build on windows!
+  
