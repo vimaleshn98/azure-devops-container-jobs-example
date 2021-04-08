@@ -6,10 +6,21 @@ stages:
     pool:
       vmImage: 'ubuntu-16.04'
     steps:
-    - script: echo build on Linux!
+    - task: DotNetCoreCLI@2
+      inputs:
+        command: 'build'
+        projects: '**/*.csproj'
+        arguments: '--configuration release'
   - job: windows
     pool:
       vmImage: 'vs2017-win2016'
     steps:
-    - script: echo build on windows!
-  
+    - task: DotNetCoreCLI@2
+      inputs:
+        command: 'build'
+        projects: '**/*.csproj'
+        arguments: '--configuration release'
+# - stage: Test
+#   jobs:
+#   - job: test-on-linux
+    
