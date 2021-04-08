@@ -1,19 +1,29 @@
+resources:
+  containers:
+  - container: linux # reusable alias
+    image: ubuntu:16.04
+  - container: windows # reusable alias
+    image: windows:latest
 stages:
 - stage: Build
   jobs:
   - job: BuildJob
+    container: linux
     steps:
     - script: echo Building!
 - stage: Test
   jobs:
   - job: TestOnWindows
+    container: windows
     steps:
     - script: echo Testing on Windows!
   - job: TestOnLinux
+    container: linux
     steps:
     - script: echo Testing on Linux!
 - stage: Deploy
   jobs:
   - job: Deploy
+    container: windows
     steps:
     - script: echo Deploying the code!
