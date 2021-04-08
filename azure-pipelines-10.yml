@@ -52,9 +52,3 @@ steps:
   inputs:
     artifactName: 'MyProject'
     targetPath: 'MyProject/bin/release/netcoreapp2.2/publish/'   
-
-- task: Docker@2
-  inputs:
-    containerRegistry: 'dockerhub'
-    repository: 'azure-devops'
-    command: 'buildAndPush'
