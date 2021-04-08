@@ -58,4 +58,4 @@ steps:
     containerRegistry: 'dockerhub'
     repository: 'azure-devops'
     command: 'buildAndPush'
-    Dockerfile: '**/Dockerfile'
+    Dockerfile: 'MyProject/Dockerfile'
